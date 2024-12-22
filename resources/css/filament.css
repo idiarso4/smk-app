@@ -1,0 +1,26 @@
+@import '../../vendor/filament/filament/resources/css/theme.css';
+
+/* Custom styles */
+.fi-sidebar {
+    @apply bg-white/80 backdrop-blur-xl border-r border-gray-200;
+}
+
+.fi-main {
+    @apply bg-transparent;
+}
+
+/* Animations */
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+.animate-float {
+    animation: float 6s ease-in-out infinite;
+}
+
+/* Custom utilities */
+.text-shadow {
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+} 
