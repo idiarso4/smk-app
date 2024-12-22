@@ -9,6 +9,9 @@ class RoleSeeder extends Seeder
 {
     public function run(): void
     {
+        // Hapus semua role yang ada
+        Role::query()->delete();
+
         // Create roles
         $roles = [
             'super_admin' => 'Super Administrator',
@@ -17,6 +20,7 @@ class RoleSeeder extends Seeder
             'guru_piket' => 'Guru Piket',
             'pembimbing_pkl' => 'Pembimbing PKL',
             'wali_kelas' => 'Wali Kelas',
+            'staff_perpustakaan' => 'Staff Perpustakaan',
             'staff_sarpras' => 'Staff Sarpras',
             'kepala_sarpras' => 'Kepala Sarpras',
             'security' => 'Petugas Keamanan',

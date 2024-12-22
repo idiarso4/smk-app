@@ -3,21 +3,28 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Teacher extends Model
 {
     protected $fillable = [
         'user_id',
         'nip',
-        'position',
-        'subjects'
+        'nama_lengkap',
+        'jenis_ptk',
+        'mata_pelajaran',
+        'tempat_lahir',
+        'tanggal_lahir', 
+        'jenis_kelamin',
+        'alamat',
+        'no_hp'
     ];
 
     protected $casts = [
-        'subjects' => 'array'
+        'tanggal_lahir' => 'date',
     ];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

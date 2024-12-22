@@ -13,40 +13,47 @@ use Filament\Tables\Table;
 class TeacherResource extends Resource
 {
     protected static ?string $model = Teacher::class;
-    protected static ?string $navigationIcon = 'heroicon-o-users';
+    protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
     protected static ?string $navigationGroup = 'Master Data';
-    protected static ?string $navigationLabel = 'Guru';
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
+                Forms\Components\Select::make('user_id')
+                    ->relationship('user', 'name')
+                    ->required(),
                 Forms\Components\TextInput::make('nip')
                     ->label('NIP')
                     ->unique(ignoreRecord: true),
-                Forms\Components\TextInput::make('name')
-                    ->label('Nama')
-                    ->required(),
-                Forms\Components\TextInput::make('email')
-                    ->label('Email')
-                    ->email()
+                Forms\Components\TextInput::make('nama_lengkap')
                     ->required()
-                    ->unique(ignoreRecord: true),
-                Forms\Components\TextInput::make('phone')
-                    ->label('No. Telepon')
-                    ->tel(),
-                Forms\Components\Textarea::make('address')
-                    ->label('Alamat'),
-                Forms\Components\Select::make('gender')
-                    ->label('Jenis Kelamin')
+                    ->maxLength(255),
+                Forms\Components\Select::make('jenis_ptk')
                     ->options([
-                        'male' => 'Laki-laki',
-                        'female' => 'Perempuan',
+                        'Guru Mapel' => 'Guru Mapel',
+                        'Guru Piket' => 'Guru Piket',
+                        'Guru Pembimbing' => 'Guru Pembimbing',
                     ])
                     ->required(),
-                Forms\Components\Toggle::make('is_active')
-                    ->label('Status Aktif')
-                    ->default(true),
+                Forms\Components\TextInput::make('mata_pelajaran')
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('tempat_lahir')
+                    ->maxLength(255),
+                Forms\Components\DatePicker::make('tanggal_lahir'),
+                Forms\Components\Select::make('jenis_kelamin')
+                    ->options([
+                        'L' => 'Laki-laki',
+                        'P' => 'Perempuan',
+                    ])
+                    ->required(),
+                Forms\Components\Textarea::make('alamat')
+                    ->maxLength(65535)
+                    ->columnSpanFull(),
+                Forms\Components\TextInput::make('no_hp')
+                    ->tel()
+                    ->maxLength(255),
             ]);
     }
 
@@ -55,29 +62,20 @@ class TeacherResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('nip')
-                    ->label('NIP')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('name')
-                    ->label('Nama')
+                Tables\Columns\TextColumn::make('nama_lengkap')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('email')
-                    ->label('Email')
+                Tables\Columns\TextColumn::make('jenis_ptk')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('phone')
-                    ->label('No. Telepon'),
-                Tables\Columns\IconColumn::make('is_active')
-                    ->label('Status')
-                    ->boolean(),
+                Tables\Columns\TextColumn::make('mata_pelajaran')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('jenis_kelamin')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('no_hp')
+                    ->searchable(),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('gender')
-                    ->label('Jenis Kelamin')
-                    ->options([
-                        'male' => 'Laki-laki',
-                        'female' => 'Perempuan',
-                    ]),
-                Tables\Filters\TernaryFilter::make('is_active')
-                    ->label('Status Aktif'),
+                //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -98,4 +96,4 @@ class TeacherResource extends Resource
             'edit' => Pages\EditTeacher::route('/{record}/edit'),
         ];
     }
-} 
+}

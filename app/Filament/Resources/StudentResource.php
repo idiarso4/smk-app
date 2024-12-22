@@ -15,44 +15,51 @@ class StudentResource extends Resource
     protected static ?string $model = Student::class;
     protected static ?string $navigationIcon = 'heroicon-o-users';
     protected static ?string $navigationGroup = 'Master Data';
-    protected static ?string $navigationLabel = 'Siswa';
+    protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
+                Forms\Components\Select::make('user_id')
+                    ->relationship('user', 'name')
+                    ->required(),
                 Forms\Components\TextInput::make('nis')
                     ->label('NIS')
                     ->required()
                     ->unique(ignoreRecord: true),
-                Forms\Components\TextInput::make('name')
-                    ->label('Nama')
-                    ->required(),
-                Forms\Components\TextInput::make('email')
-                    ->label('Email')
-                    ->email()
+                Forms\Components\TextInput::make('nisn')
+                    ->label('NISN')
                     ->required()
                     ->unique(ignoreRecord: true),
-                Forms\Components\TextInput::make('phone')
-                    ->label('No. Telepon')
-                    ->tel(),
-                Forms\Components\Textarea::make('address')
-                    ->label('Alamat'),
-                Forms\Components\Select::make('gender')
-                    ->label('Jenis Kelamin')
+                Forms\Components\TextInput::make('nama_lengkap')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('kelas')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('jurusan')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('tempat_lahir')
+                    ->maxLength(255),
+                Forms\Components\DatePicker::make('tanggal_lahir'),
+                Forms\Components\Select::make('jenis_kelamin')
                     ->options([
-                        'male' => 'Laki-laki',
-                        'female' => 'Perempuan',
+                        'L' => 'Laki-laki',
+                        'P' => 'Perempuan',
                     ])
                     ->required(),
-                Forms\Components\Select::make('class_room_id')
-                    ->label('Kelas')
-                    ->relationship('currentClass.class', 'name')
-                    ->searchable()
-                    ->preload(),
-                Forms\Components\Toggle::make('is_active')
-                    ->label('Status Aktif')
-                    ->default(true),
+                Forms\Components\Textarea::make('alamat')
+                    ->maxLength(65535)
+                    ->columnSpanFull(),
+                Forms\Components\TextInput::make('nama_ayah')
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('nama_ibu')
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('no_hp_ortu')
+                    ->tel()
+                    ->maxLength(255),
             ]);
     }
 
@@ -61,35 +68,20 @@ class StudentResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('nis')
-                    ->label('NIS')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('name')
-                    ->label('Nama')
+                Tables\Columns\TextColumn::make('nisn')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('currentClass.class.name')
-                    ->label('Kelas')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('email')
-                    ->label('Email')
+                Tables\Columns\TextColumn::make('nama_lengkap')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('phone')
-                    ->label('No. Telepon'),
-                Tables\Columns\IconColumn::make('is_active')
-                    ->label('Status')
-                    ->boolean(),
+                Tables\Columns\TextColumn::make('kelas')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('jurusan')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('jenis_kelamin')
+                    ->searchable(),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('class_room_id')
-                    ->label('Kelas')
-                    ->relationship('currentClass.class', 'name'),
-                Tables\Filters\SelectFilter::make('gender')
-                    ->label('Jenis Kelamin')
-                    ->options([
-                        'male' => 'Laki-laki',
-                        'female' => 'Perempuan',
-                    ]),
-                Tables\Filters\TernaryFilter::make('is_active')
-                    ->label('Status Aktif'),
+                //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -110,4 +102,4 @@ class StudentResource extends Resource
             'edit' => Pages\EditStudent::route('/{record}/edit'),
         ];
     }
-} 
+}

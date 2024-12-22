@@ -14,9 +14,9 @@ use Illuminate\Support\Facades\Hash;
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
-    protected static ?string $navigationIcon = 'heroicon-o-users';
+    protected static ?string $navigationIcon = 'heroicon-o-user-group';
     protected static ?string $navigationGroup = 'System';
-    protected static ?string $navigationLabel = 'Users';
+    protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {
@@ -25,27 +25,32 @@ class UserResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
+                Forms\Components\TextInput::make('username')
+                    ->required()
+                    ->unique(ignoreRecord: true)
+                    ->maxLength(255),
                 Forms\Components\TextInput::make('email')
                     ->email()
                     ->required()
+                    ->unique(ignoreRecord: true)
                     ->maxLength(255),
-                Forms\Components\TextInput::make('username')
-                    ->required()
+                Forms\Components\TextInput::make('phone')
+                    ->tel()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('password')
-                    ->password()
-                    ->dehydrateStateUsing(fn ($state) => Hash::make($state))
-                    ->dehydrated(fn ($state) => filled($state))
-                    ->required(fn (string $context): bool => $context === 'create'),
                 Forms\Components\Select::make('user_type')
-                    ->required()
                     ->options([
-                        'admin' => 'Admin',
+                        'admin' => 'Administrator',
                         'teacher' => 'Guru',
                         'student' => 'Siswa',
                         'staff' => 'Staff',
                         'librarian' => 'Pustakawan',
-                    ]),
+                    ])
+                    ->required(),
+                Forms\Components\TextInput::make('password')
+                    ->password()
+                    ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
+                    ->dehydrated(fn (?string $state): bool => filled($state))
+                    ->required(fn (string $operation): bool => $operation === 'create'),
                 Forms\Components\Toggle::make('is_active')
                     ->required(),
             ]);
@@ -57,9 +62,9 @@ class UserResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('email')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('username')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('email')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('user_type')
                     ->searchable(),
@@ -79,19 +84,13 @@ class UserResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
     }
 
     public static function getPages(): array

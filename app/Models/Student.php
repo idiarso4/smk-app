@@ -3,33 +3,32 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Student extends Model
 {
     protected $fillable = [
         'user_id',
-        'class_id',
         'nis',
-        'nisn'
+        'nisn',
+        'nama_lengkap',
+        'kelas',
+        'jurusan',
+        'tempat_lahir',
+        'tanggal_lahir',
+        'jenis_kelamin',
+        'alamat',
+        'nama_ayah',
+        'nama_ibu',
+        'no_hp_ortu'
     ];
 
-    public function user()
+    protected $casts = [
+        'tanggal_lahir' => 'date',
+    ];
+
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function class()
-    {
-        return $this->belongsTo(ClassRoom::class, 'class_id');
-    }
-
-    public function permits()
-    {
-        return $this->hasMany(Permit::class);
-    }
-
-    public function internship()
-    {
-        return $this->hasOne(Internship::class);
     }
 } 
